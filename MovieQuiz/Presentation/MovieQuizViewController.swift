@@ -7,6 +7,9 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private weak var counterLabel: UILabel!
     
+    @IBOutlet weak var noButton: UIButton!
+    @IBOutlet weak var yesButton: UIButton!
+    
     // MARK: - IBActions
     @IBAction private func noButtonClicked(_ sender: Any) {
         let currentQuestion = questions[currentQuestionIndex]
@@ -18,6 +21,7 @@ final class MovieQuizViewController: UIViewController {
         let givenAnswer = true
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
+    
     
     private struct QuizStepViewModel {
         let image: UIImage
@@ -54,6 +58,15 @@ final class MovieQuizViewController: UIViewController {
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private var gameStatistics = GameStatistics()
+    
+    enum Strings {
+        static let roundResult = "Результат раунда:"
+        static let quizzesCount = "Количество сыгранных квизов:"
+        static let record = "Рекорд:"
+        static let averageAccuracy = "Средняя точность:"
+        static let roundFinishedTitle = "Этот раунд окончен!"
+        static let playAgainButton = "Сыграть ещё раз"
+    }
     
     private let questions: [QuizQuesction] = [
         QuizQuesction(
@@ -110,6 +123,8 @@ final class MovieQuizViewController: UIViewController {
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
+        
+        setButtonEnabled(true)
     }
     
     private func show(quiz result: QuizResultsViewModel) {
@@ -133,6 +148,8 @@ final class MovieQuizViewController: UIViewController {
 
     // MARK: - Quiz Logic
     private func showAnswerResult(isCorrect: Bool) {
+        setButtonEnabled(false)
+        
         if isCorrect {
             correctAnswers += 1
         }
@@ -172,13 +189,14 @@ final class MovieQuizViewController: UIViewController {
             gameStatistics.bestResult = correctAnswers
             gameStatistics.bestResultDate = Date()
         }
-
+        
         let resultText = """
-        Результат раунда: \(correctAnswers)/\(questions.count)
-        Количество сыгранных квизов: \(gameStatistics.totalQuizzes)
-        Рекорд: \(gameStatistics.bestResult) (\(formattedDate(gameStatistics.bestResultDate)))
-        Средняя точность: \(String(format: "%.2f", gameStatistics.averageAccuracy))%
+        \(Strings.roundResult) \(correctAnswers)/\(questions.count)
+        \(Strings.quizzesCount) \(gameStatistics.totalQuizzes)
+        \(Strings.record) \(gameStatistics.bestResult) (\(formattedDate(gameStatistics.bestResultDate)))
+        \(Strings.averageAccuracy) \(String(format: "%.2f", gameStatistics.averageAccuracy))%
         """
+        
 
         let viewModel = QuizResultsViewModel(
             title: "Этот раунд окончен!",
@@ -189,7 +207,7 @@ final class MovieQuizViewController: UIViewController {
     }
     
     private func formattedDate(_ date: Date?) -> String {
-        guard let date = date else { return "-" }
+        guard let date else { return "-" }
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         formatter.timeStyle = .short
@@ -209,4 +227,12 @@ final class MovieQuizViewController: UIViewController {
         alert.addAction(cancelAction)
         present(alert, animated: true)
     }
+    
+    private func setButtonEnabled(_ isEnabled: Bool) {
+        noButton.isEnabled = isEnabled
+        yesButton.isEnabled = isEnabled
+    }
+    
 }
+
+
