@@ -66,26 +66,6 @@ final class MovieQuizViewController: UIViewController {
         questionFactory.loadData()
     }
     
-    /*
-     private func setup() {
-     setupStatisticService()
-     setupQuestionFactory()
-     setupAlertPresenter()
-     requestFirstQuestion()
-     }
-     
-     private func setupStatisticService() {
-     statisticService = StatisticService()
-     }
-     
-     
-     private func setupQuestionFactory() {
-     let factory = QuestionFactory()
-     factory.setup(delegate: self)
-     questionFactory = factory
-     }
-     */
-    
     private func setupAlertPresenter() {
         alertPresenter = AlertPresenter(viewController: self)
     }
@@ -229,13 +209,14 @@ final class MovieQuizViewController: UIViewController {
 extension MovieQuizViewController: QuestionFactoryDelegate {
     
     func didReceiveNextQuestion(_ question: QuizQuestion?) {
-        guard let question = question else {
-            return
-        }
-        currentQuestion = question
-        let viewModel = convert(model: question)
         DispatchQueue.main.async { [weak self] in
-            self?.show(quiz: viewModel)
+            guard let self, let question else { return }
+
+            self.hideLoadingIndicator()
+            self.currentQuestion = question
+
+            let viewModel = self.convert(model: question)
+            self.show(quiz: viewModel)
         }
     }
     
@@ -248,5 +229,10 @@ extension MovieQuizViewController: QuestionFactoryDelegate {
     
     func didFailToLoadData(with error: Error) {
         showNetworkError(message: error.localizedDescription)
+    }
+    
+    func didStartLoadingQuestion() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
     }
 }

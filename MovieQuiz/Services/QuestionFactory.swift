@@ -79,32 +79,47 @@ final class QuestionFactory: QuestionFactoryProtocol {
      */
     
     func requestNextQuestion() {
+        DispatchQueue.main.async { [weak self] in
+            self?.delegate?.didStartLoadingQuestion()
+        }
+
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
-            let index = (0..<self.movies.count).randomElement() ?? 0
-            
-            guard let movie = self.movies[safe: index] else { return }
-            
+            guard !self.movies.isEmpty else { return }
+
+            let index = Int.random(in: 0..<self.movies.count)
+            let movie = self.movies[index]
+            let url = movie.resizedImageURL
+
             var imageData = Data()
-           
-           do {
-                imageData = try Data(contentsOf: movie.resizedImageURL)
+            do {
+                imageData = try Data(contentsOf: url)
             } catch {
-                print("Failed to load image")
+                DispatchQueue.main.async { [weak self] in
+                    self?.delegate?.didFailToLoadData(with: QuestionFactoryError.failedToLoadImage)
+                }
+                return
             }
-            
+
             let rating = Float(movie.rating) ?? 0
-            
-            let text = "Рейтинг этого фильма больше чем 7?"
-            let correctAnswer = rating > 7
-            
-            let question = QuizQuestion(image: imageData,
-                                         text: text,
-                                         correctAnswer: correctAnswer)
-            
+            let threshold = Float.random(in: 6...9)
+
+            let comparisonIsGreater = Bool.random()
+            let text: String
+            let correctAnswer: Bool
+
+            if comparisonIsGreater {
+                text = "Рейтинг этого фильма больше чем \(String(format: "%.1f", threshold))?"
+                correctAnswer = rating > threshold
+            } else {
+                text = "Рейтинг этого фильма меньше чем \(String(format: "%.1f", threshold))?"
+                correctAnswer = rating < threshold
+            }
+
+            let question = QuizQuestion(image: imageData, text: text, correctAnswer: correctAnswer)
+
             DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.didReceiveNextQuestion(question)
+                self?.delegate?.didReceiveNextQuestion(question)
             }
         }
     }
@@ -114,8 +129,20 @@ final class QuestionFactory: QuestionFactoryProtocol {
             guard let self = self else { return }
             switch result {
             case .success(let mostPopularMovies):
+                if !mostPopularMovies.errorMessage.isEmpty {
+                    self.delegate?.didFailToLoadData(
+                        with: NSError(
+                            domain: "IMDB API",
+                            code: 0,
+                            userInfo: [NSLocalizedDescriptionKey: mostPopularMovies.errorMessage]
+                        )
+                    )
+                    return
+                }
+
                 self.movies = mostPopularMovies.items
                 self.delegate?.didLoadDataFromServer()
+                
             case .failure(let error):
                 self.delegate?.didFailToLoadData(with: error)
             }
