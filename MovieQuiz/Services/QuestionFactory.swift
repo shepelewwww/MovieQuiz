@@ -1,7 +1,3 @@
-//
-//  QuestionFactory.swift
-//  MovieQuiz
-//
 import Foundation
 
 final class QuestionFactory: QuestionFactoryProtocol {

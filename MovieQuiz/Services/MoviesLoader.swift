@@ -1,10 +1,3 @@
-//
-//  MoviesLoader.swift
-//  MovieQuiz
-//
-//  Created by Артем Шепелев on 28.01.2026.
-//
-
 import Foundation
 
 protocol MoviesLoading {
@@ -12,9 +5,12 @@ protocol MoviesLoading {
 }
     
 struct MoviesLoader: MoviesLoading {
-    private let networkClient = NetworkClient()
+    private let networkClient: NetworkRouting
     private let decoder = JSONDecoder()
-
+    
+    init(networkClient: NetworkRouting = NetworkClient()) {
+            self.networkClient = networkClient
+        }
     private var mostPopularMoviesUrl: URL? {
         URL(string: "https://tv-api.com/en/API/Top250Movies/k_zcuw1ytf")
     }

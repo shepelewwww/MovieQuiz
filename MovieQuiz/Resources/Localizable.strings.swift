@@ -1,10 +1,3 @@
-//
-//  Localizable.strings.swift
-//  MovieQuiz
-//
-//  Created by Артем Шепелев on 19.01.2026.
-//
-
 import Foundation
 
 struct AlertText {
