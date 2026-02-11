@@ -1,15 +1,6 @@
-//
-//  MoviesLoaderTests.swift
-//  MovieQuizTests
-//
-//  Created by Артем Шепелев on 3.02.2026.
-//
-
 import Foundation
 import XCTest
 @testable import MovieQuiz
-
-
 
 class MoviesLoaderTests: XCTestCase {
     
