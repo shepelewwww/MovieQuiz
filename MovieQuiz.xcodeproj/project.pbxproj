@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		990458572F3CDFE5002C6DC9 /* MovieQuizViewControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990458562F3CDFE2002C6DC9 /* MovieQuizViewControllerProtocol.swift */; };
 		991FA7A82F196BA80051AABF /* QuestionFactoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991FA7A72F196BA80051AABF /* QuestionFactoryDelegate.swift */; };
 		9924DC422F1EA179000C30D8 /* Localizable.strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9924DC412F1EA179000C30D8 /* Localizable.strings.swift */; };
 		993E2D672F19164200599656 /* QuestionFactoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993E2D662F19164200599656 /* QuestionFactoryProtocol.swift */; };
@@ -55,6 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		990458562F3CDFE2002C6DC9 /* MovieQuizViewControllerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieQuizViewControllerProtocol.swift; sourceTree = "<group>"; };
 		991FA7A72F196BA80051AABF /* QuestionFactoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactoryDelegate.swift; sourceTree = "<group>"; };
 		9924DC412F1EA179000C30D8 /* Localizable.strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.strings.swift; sourceTree = "<group>"; };
 		993E2D662F19164200599656 /* QuestionFactoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactoryProtocol.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				994C32F22F2A734F00C7B8CB /* MoviesLoader.swift */,
 				99ACD0242F2CC5D60080C777 /* NetworkError.swift */,
 				99ACD0262F2CD74C0080C777 /* QuestionFactoryError.swift */,
+				990458562F3CDFE2002C6DC9 /* MovieQuizViewControllerProtocol.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				990458572F3CDFE5002C6DC9 /* MovieQuizViewControllerProtocol.swift in Sources */,
 				994C32EF2F2A6FA900C7B8CB /* NetworkClient.swift in Sources */,
 				AD5EE5DE284D7887003966EF /* UIColor+Extensions.swift in Sources */,
 				99ACD0252F2CC5D60080C777 /* NetworkError.swift in Sources */,

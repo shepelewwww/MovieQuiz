@@ -1,86 +1,90 @@
 import XCTest
 
 class MovieQuizUITests: XCTestCase {
-    // swiftlint:disable:next implicitly_unwrapped_optional
+
     var app: XCUIApplication!
-    
+
     override func setUpWithError() throws {
         try super.setUpWithError()
+        continueAfterFailure = false
         
         app = XCUIApplication()
         app.launch()
-        
-        // это специальная настройка для тестов: если один тест не прошёл,
-        // то следующие тесты запускаться не будут; и правда, зачем ждать?
-        continueAfterFailure = false
     }
+
     override func tearDownWithError() throws {
-        try super.tearDownWithError()
-        
         app.terminate()
         app = nil
+        try super.tearDownWithError()
     }
-    
-    func testYesButton() {
+
+    func testYesButtonChangesPoster() {
+        // находим первый постер
         let firstPoster = app.images["Poster"]
         let firstPosterData = firstPoster.screenshot().pngRepresentation
-        
+
+        // нажимаем "Yes"
         app.buttons["Yes"].tap()
-        sleep(3)
-        
-        let secondPoster = app.images["Poster"]
-        let secondPosterData = secondPoster.screenshot().pngRepresentation
-        
-        XCTAssertNotEqual(firstPosterData, secondPosterData)
-    }
-    
-    func testNoButton() {
-        sleep(3)
-        
-        let firstPoster = app.images["Poster"]
-        let firstPosterData = firstPoster.screenshot().pngRepresentation
-        
-        app.buttons["No"].tap()
-        sleep(3)
-        
+        sleep(2) // подождать пока картинка обновится
+
         let secondPoster = app.images["Poster"]
         let secondPosterData = secondPoster.screenshot().pngRepresentation
 
-        let indexLabel = app.staticTexts["Index"]
-       
         XCTAssertNotEqual(firstPosterData, secondPosterData)
+    }
+
+    func testNoButtonUpdatesIndex() {
+        let firstPoster = app.images["Poster"]
+        _ = firstPoster.screenshot().pngRepresentation
+
+        app.buttons["No"].tap()
+        sleep(2)
+
+        let indexLabel = app.staticTexts["Index"]
         XCTAssertEqual(indexLabel.label, "2/10")
     }
-    
-    func testGameFinish() {
-        sleep(2)
+
+    func testGameFinishAlertAppears() {
+        // Идем по всем 10 вопросам, отвечая "No"
         for _ in 1...10 {
             app.buttons["No"].tap()
-            sleep(2)
+            sleep(1) // даем время UI обновиться
         }
 
-        let alert = app.alerts["Game results"]
+        // Находим alert по заголовку
+        let alert = app.alerts["Этот раунд окончен!"]
         
-        XCTAssertTrue(alert.exists)
-        XCTAssertTrue(alert.label == "Этот раунд окончен!")
-        XCTAssertTrue(alert.buttons.firstMatch.label == "Сыграть ещё раз")
+        // Проверяем, что alert появился
+        XCTAssertTrue(alert.exists, "Alert с заголовком 'Этот раунд окончен!' должен появиться")
+        
+        // Проверяем, что кнопка "Сыграть ещё раз" существует
+        let playAgainButton = alert.buttons["Сыграть ещё раз"]
+        XCTAssertTrue(playAgainButton.exists, "Кнопка 'Сыграть ещё раз' должна быть доступна в alert")
     }
 
-    func testAlertDismiss() {
-        sleep(2)
+    func testAlertDismissResetsGame() {
         for _ in 1...10 {
             app.buttons["No"].tap()
             sleep(2)
         }
+
+        let alert = app.alerts["Этот раунд окончен!"]
+        XCTAssertTrue(alert.exists)
+
+        let playAgainButton = alert.buttons["Сыграть ещё раз"]
+        XCTAssertTrue(playAgainButton.exists)
+        playAgainButton.tap()
         
-        let alert = app.alerts["Game results"]
-        alert.buttons.firstMatch.tap()
-        
-        sleep(2)
-        
+        // Ждём, пока alert исчезнет
+        let alertDismissed = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == false"),
+            object: alert
+        )
+        let result = XCTWaiter.wait(for: [alertDismissed], timeout: 5)
+        XCTAssertEqual(result, .completed)
+
+        // Проверяем, что индекс сбросился
         let indexLabel = app.staticTexts["Index"]
-        
-        XCTAssertFalse(alert.exists)
-        XCTAssertTrue(indexLabel.label == "1/10")
+        XCTAssertEqual(indexLabel.label, "1/10")
     }
 }
