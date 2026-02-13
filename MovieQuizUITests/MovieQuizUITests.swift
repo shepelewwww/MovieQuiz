@@ -45,38 +45,41 @@ class MovieQuizUITests: XCTestCase {
     }
 
     func testGameFinishAlertAppears() {
-        // Идем по всем 10 вопросам, отвечая "No"
         for _ in 1...10 {
             app.buttons["No"].tap()
-            sleep(1) // даем время UI обновиться
+            sleep(1)
         }
 
-        // Находим alert по заголовку
-        let alert = app.alerts["Этот раунд окончен!"]
-        
-        // Проверяем, что alert появился
-        XCTAssertTrue(alert.exists, "Alert с заголовком 'Этот раунд окончен!' должен появиться")
-        
-        // Проверяем, что кнопка "Сыграть ещё раз" существует
-        let playAgainButton = alert.buttons["Сыграть ещё раз"]
-        XCTAssertTrue(playAgainButton.exists, "Кнопка 'Сыграть ещё раз' должна быть доступна в alert")
-    }
-
-    func testAlertDismissResetsGame() {
-        for _ in 1...10 {
-            app.buttons["No"].tap()
-        }
-
-        let alert = app.alerts.firstMatch
+        let alert = app.alerts["GameResultsAlert"] // ищем по идентификатору
         XCTAssertTrue(alert.waitForExistence(timeout: 5))
 
         let playAgainButton = alert.buttons["Сыграть ещё раз"]
         XCTAssertTrue(playAgainButton.exists)
+    }
+
+    func testAlertDismissResetsGame() {
+        // Проходим все 10 вопросов
+        for _ in 1...10 {
+            let noButton = app.buttons["No"]
+            XCTAssertTrue(noButton.waitForExistence(timeout: 2))
+            noButton.tap()
+        }
+
+        // Находим alert
+        let alert = app.alerts["GameResultsAlert"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 5))
+
+        // Нажимаем кнопку "Сыграть ещё раз"
+        let playAgainButton = alert.buttons["Сыграть ещё раз"]
+        XCTAssertTrue(playAgainButton.exists)
         playAgainButton.tap()
 
-        XCTAssertFalse(alert.waitForExistence(timeout: 2))
+        // Ждём, пока alert исчезнет
+        XCTAssertFalse(alert.waitForExistence(timeout: 5), "Alert должен исчезнуть после нажатия на кнопку")
 
+        // Проверяем, что индекс вопросов сбросился
         let indexLabel = app.staticTexts["Index"]
+        XCTAssertTrue(indexLabel.waitForExistence(timeout: 2))
         XCTAssertEqual(indexLabel.label, "1/10")
     }
 }

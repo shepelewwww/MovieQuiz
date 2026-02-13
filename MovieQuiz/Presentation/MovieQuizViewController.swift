@@ -75,7 +75,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         alertPresenter.showAlert(model: model)
     }
     
-    private func setButtonsEnabled(_ isEnabled: Bool) {
+    func setButtonsEnabled(_ isEnabled: Bool) {
         yesButton.isEnabled = isEnabled
         noButton.isEnabled = isEnabled
     }

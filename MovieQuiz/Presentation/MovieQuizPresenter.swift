@@ -27,12 +27,17 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         self.viewController = viewController
         self.statisticService = StatisticService()
         
+        setup()
+    }
+    
+    // MARK: - Privat setap
+    private func setup() {
         questionFactory = QuestionFactory(
             moviesLoader: MoviesLoader(),
             delegate: self
         )
+        viewController?.showLoadingIndicator()
         questionFactory?.loadData()
-        viewController.showLoadingIndicator()
     }
     
     // MARK: - User actions
@@ -46,11 +51,12 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     private func didAnswer(isYes: Bool) {
-        guard let currentQuestion = currentQuestion else { return }
+        guard let currentQuestion else { return }
         
         let isCorrect = isYes == currentQuestion.correctAnswer
         if isCorrect { correctAnswers += 1 }
         
+        viewController?.setButtonsEnabled(false)
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
@@ -85,7 +91,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         currentQuestionIndex == questionsAmount - 1
     }
     
-    func makeResultsMessage() -> String {
+    private func makeResultsMessage() -> String {
         statisticService.store(correct: correctAnswers, total: questionsAmount)
         let bestGame = statisticService.bestGame
         
