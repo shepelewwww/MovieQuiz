@@ -1,10 +1,3 @@
-//
-//  AlertPresenter.swift
-//  MovieQuiz
-//
-//  Created by Артем Шепелев on 16.01.2026.
-//
-
 import UIKit
 
 final class AlertPresenter {
@@ -21,6 +14,8 @@ final class AlertPresenter {
             message: model.message,
             preferredStyle: .alert
         )
+        
+        alert.view.accessibilityIdentifier = "GameResultsAlert"
         
         let action = UIAlertAction(title: model.buttonText, style: .default) { _ in
             model.completion()
