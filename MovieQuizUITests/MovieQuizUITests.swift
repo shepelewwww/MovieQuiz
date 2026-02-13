@@ -65,25 +65,17 @@ class MovieQuizUITests: XCTestCase {
     func testAlertDismissResetsGame() {
         for _ in 1...10 {
             app.buttons["No"].tap()
-            sleep(2)
         }
 
-        let alert = app.alerts["Этот раунд окончен!"]
-        XCTAssertTrue(alert.exists)
+        let alert = app.alerts.firstMatch
+        XCTAssertTrue(alert.waitForExistence(timeout: 5))
 
         let playAgainButton = alert.buttons["Сыграть ещё раз"]
         XCTAssertTrue(playAgainButton.exists)
         playAgainButton.tap()
-        
-        // Ждём, пока alert исчезнет
-        let alertDismissed = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "exists == false"),
-            object: alert
-        )
-        let result = XCTWaiter.wait(for: [alertDismissed], timeout: 5)
-        XCTAssertEqual(result, .completed)
 
-        // Проверяем, что индекс сбросился
+        XCTAssertFalse(alert.waitForExistence(timeout: 2))
+
         let indexLabel = app.staticTexts["Index"]
         XCTAssertEqual(indexLabel.label, "1/10")
     }

@@ -122,7 +122,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         currentQuestion = question
         
         let viewModel = QuizStepViewModel(
-            imageData: question.image, // передаём Data
+            imageData: question.image,
             question: question.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )

@@ -53,25 +53,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         alertPresenter.showAlert(model: model)
     }
     
-    func showAnswerResult(isCorrect: Bool) {
-        setButtonsEnabled(false)
-        
-        highlightImageBorder(isCorrectAnswer: isCorrect)
-    }
-    
-    func showFinalResult(message: String) {
-        let model = AlertModel(
-            title: "Этот раунд окончен!",
-            message: message,
-            buttonText: "Сыграть ещё раз"
-        ) { [weak self] in
-            guard let self else { return }
-            self.presenter.restartGame()
-        }
-        
-        alertPresenter.showAlert(model: model)
-    }
-    
     func showLoadingIndicator() {
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()

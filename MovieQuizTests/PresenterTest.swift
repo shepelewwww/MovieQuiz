@@ -3,27 +3,27 @@ import XCTest
 
 final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     func show(quiz step: QuizStepViewModel) {
-    
+        // intentionally left empty for testing
     }
     
     func show(quiz result: QuizResultsViewModel) {
-    
+        // intentionally left empty for testing
     }
     
     func highlightImageBorder(isCorrectAnswer: Bool) {
-    
+        // intentionally left empty for testing
     }
     
     func showLoadingIndicator() {
-    
+        // intentionally left empty for testing
     }
     
     func hideLoadingIndicator() {
-    
+        // intentionally left empty for testing
     }
     
     func showNetworkError(message: String) {
-    
+        // intentionally left empty for testing
     }
 }
 
